@@ -5,6 +5,7 @@ pragma solidity 0.8.17;
 import "./interfaces/racks/IRacksLogic.sol";
 
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
+import "@openzeppelin/contracts/token/ERC721/IERC721.sol";
 
 contract RacksLogic is IRacksLogic {
     constructor() {}
@@ -18,7 +19,7 @@ contract RacksLogic is IRacksLogic {
         emit ethStacked(msg.sender, msg.value);
     }
 
-    function getTokens(GetTokenParams calldata params) external view returns (bool isSuccessful) {
+    function getTokens(GetTokenParams calldata params) external returns (bool isSuccessful) {
         require(params.tokenAddress != address(0), "!Address");
         require(params.amountOfToken != 0, "!Amount");
 
@@ -30,5 +31,14 @@ contract RacksLogic is IRacksLogic {
         require(isSuccessful, "TF");
 
         emit tokenStacked(msg.sender, params.tokenAddress, params.amountOfToken);
+    }
+
+    function getNft(GetNftParams calldata params) external returns (bool isSuccessful) {
+        require(params.NftAddress != address(0), "!Address");
+        require(params.tokenId != 0, "!TokenId");
+
+        IERC721(params.NftAddress).safeTransferFrom(msg.sender, address(this), params.tokenId);
+        isSuccessful = true;
+        emit nftStaked(msg.sender, params.NftAddress, params.tokenId);
     }
 }

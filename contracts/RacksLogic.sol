@@ -10,6 +10,11 @@ import "@openzeppelin/contracts/token/ERC721/IERC721.sol";
 contract RacksLogic is IRacksLogic {
     constructor() {}
 
+    receive() external payable {
+        (bool success, ) = payable(msg.sender).call{value: msg.value}("");
+        require(success, "TF");
+    }
+
     function getEth() external payable returns (bool isSuccessful) {
         require(msg.value != 0, "PF");
 
